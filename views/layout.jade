@@ -16,5 +16,14 @@ html
           li(role='presentation')
             a(href='/play') Play
           li(role='presentation')
-            a(href='#') Options
+            a(href='#') Statistics
+        ul.nav.navbar-nav.navbar-right
+          li(role='presentation')
+            a(href='/login') Login
+
+    - if (messages.error)
+      .alert.alert-warning(role="alert")
+        a.close(href='#', data-dismiss='alert') &times;
+        span= messages.error
+
     block content
