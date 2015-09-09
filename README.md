@@ -1,0 +1,2 @@
+# typster
+A typing game
