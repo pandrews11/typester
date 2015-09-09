@@ -1,0 +1,20 @@
+html
+  head
+    title typester
+    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
+
+    script(type='text/javascript', src='http://code.jquery.com/jquery.min.js')
+    script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
+    script(type='text/javascript', src='/js/typer.js')
+  body
+    nav.navbar.navbar-default
+      div.container-fluid
+        ul.nav.navbar-nav
+          li(role='presentation')
+            a(href='/') Home
+          li(role='presentation')
+            a(href='/play') Play
+          li(role='presentation')
+            a(href='#') Options
+    block content

@@ -1,0 +1,12 @@
+{
+  "name": "typester",
+  "version": "0.0.0",
+  "description": "A typing game",
+  "dependencies": {
+    "express": "latest",
+    "jade": "latest",
+    "jquery": "^2.1.4",
+    "socket.io": "latest"
+  },
+  "author": "Patrick Andrews"
+}
