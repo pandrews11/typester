@@ -6,7 +6,7 @@ html
 
     script(type='text/javascript', src='http://code.jquery.com/jquery.min.js')
     script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
-    script(type='text/javascript', src='/js/typer.js')
+    script(type='text/javascript', src='/js/arena.js')
   body
     nav.navbar.navbar-default
       div.container-fluid
@@ -14,14 +14,12 @@ html
           li(role='presentation')
             a(href='/') Home
           li(role='presentation')
-            a(href='/play') Play
-          li(role='presentation')
             a(href='#') Statistics
         ul.nav.navbar-nav.navbar-right
           li(role='presentation')
           - if (session.user)
               p.navbar-text.navbar-right 
-                a(href='users/logout') Logout
+                a(href='/users/logout') Logout
               p.navbar-text.navbar-right Signed in as #{session.user.username}
           - else
               button.btn.btn-default.navbar-btn.navbar-right(data-toggle='modal', data-target='#login-modal') Login
@@ -29,7 +27,7 @@ html
     - if (messages.error)
       .alert.alert-warning.fade.in(role="alert")
         a.close(href='#', data-dismiss='alert') &times;
-        span= qmessages.error
+        span= messages.error
     - if (messages.success)
       .alert.alert-success.fade.in(role="alert")
         a.close(href='#', data-dismiss='alert') &times;

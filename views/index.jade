@@ -1,6 +1,14 @@
 extends layout
 
 block content
-  .page-header
-    h1 Home
-      small A place for typing
+  div.container
+    div.jumbotron
+      h1 New Arena
+      form.form-horizontal(action='arenas/create', method='post')
+        div.form-group
+          label.col-sm-2.control-label Type
+          div.col-sm-4
+            select(name='players').form-control
+              option(value='1') Singleplayer
+              option(value='2') Multiplayer
+        input.btn.btn-primary(type='submit')

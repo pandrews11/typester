@@ -1,7 +1,6 @@
 var express  = require('express'),
     mongoose = require('mongoose'),
-    router   = express.Router(),
-    loggedIn = 0;
+    router   = express.Router();
 
 router.route('/')
   .get(function(req, res, next) {

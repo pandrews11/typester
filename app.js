@@ -10,9 +10,11 @@ var MongoStore = require('connect-mongo')(session);
 
 var db = require('./db');
 var user = require('./models/users');
+var arena = require('./models/arenas');
 
 var routes = require('./routes/index'),
-    users = require('./routes/users');
+    users = require('./routes/users'),
+    arenas = require('./routes/arenas');
 
 
 var app = express();
@@ -32,7 +34,7 @@ app.use(methodOverride(function(req, res) {
 
 app.use(cookieParser('secret-string'));
 app.use(session({
-  cookie: { maxAge: 60000 },
+  cookie: { maxAge: 60000 * 60 },
   secret: 'secret-string',
   resave: true,
   saveUninitialized: true,
@@ -52,7 +54,8 @@ app.use(function(req, res, next) {
 app.use(flash());
 
 app.use('/', routes);
-app.use('/users', users)
+app.use('/users', users);
+app.use('/arenas', arenas);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
