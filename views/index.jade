@@ -11,4 +11,5 @@ block content
             select(name='players').form-control
               option(value='1') Singleplayer
               option(value='2') Multiplayer
+        input(name="userId" value=session.user._id)
         input.btn.btn-primary(type='submit')
