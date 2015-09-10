@@ -13,14 +13,14 @@ html
         ul.nav.navbar-nav
           li(role='presentation')
             a(href='/') Home
-          li(role='presentation')
-            a(href='#') Statistics
         ul.nav.navbar-nav.navbar-right
           li(role='presentation')
           - if (session.user)
               p.navbar-text.navbar-right 
                 a(href='/users/logout') Logout
-              p.navbar-text.navbar-right Signed in as #{session.user.username}
+              p.navbar-text.navbar-right Signed in as 
+                a(href='/users/#{session.user._id}') 
+                 = session.user.username
           - else
               button.btn.btn-default.navbar-btn.navbar-right(data-toggle='modal', data-target='#login-modal') Login
 

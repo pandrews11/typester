@@ -16,6 +16,19 @@ router.route('/')
     });
   });
 
+  router.route('/:id')
+    .get(function(req, res, next) {
+      mongoose.model('User').findById(req.params.id, function (err, user) {
+        res.format({
+          html: function(){
+            res.render('users/show', {
+              "user" : user
+            });
+          }
+        });
+      });
+    });
+
 router.route('/create')
   .post(function(req, res) {
     var username = req.body.username,
