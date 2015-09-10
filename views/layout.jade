@@ -19,11 +19,43 @@ html
             a(href='#') Statistics
         ul.nav.navbar-nav.navbar-right
           li(role='presentation')
-            a(href='/login') Login
+          - if (session.user)
+              p.navbar-text.navbar-right 
+                a(href='users/logout') Logout
+              p.navbar-text.navbar-right Signed in as #{session.user.username}
+          - else
+              button.btn.btn-default.navbar-btn.navbar-right(data-toggle='modal', data-target='#login-modal') Login
 
     - if (messages.error)
-      .alert.alert-warning(role="alert")
+      .alert.alert-warning.fade.in(role="alert")
         a.close(href='#', data-dismiss='alert') &times;
-        span= messages.error
+        span= qmessages.error
+    - if (messages.success)
+      .alert.alert-success.fade.in(role="alert")
+        a.close(href='#', data-dismiss='alert') &times;
+        span= messages.success
 
     block content
+    
+    #login-modal.modal.fade(tabindex='-1', role='dialog')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(data-dismiss='modal') &times;
+            h3.modal-title Login
+            .modal-body
+              form.form-horizontal(action='login', method='post')
+                .form-group
+                  label.col-sm-2.control-label Username
+                  div.col-sm-4
+                    input.form-control(type="text", name="username", placeholder="Username")
+                .form-group
+                  label.col-sm-2.control-label Password
+                  div.col-sm-4
+                    input.form-control(type="password", name="password", placeholder="Password")
+                .modal-footer
+                  button.btn.btn-default(type='button' data-dismiss='modal') Close
+                  input.btn.btn-primary(type='submit')
+            
+    
+    

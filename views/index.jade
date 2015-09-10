@@ -1,27 +1,6 @@
 extends layout
 
 block content
-  div.container
-    div.jumbotron
-      h1 Welcome to typester
-
-      h3.lead Create an account or play as a guest
-      form.form-horizontal(action='users', method='post')
-        div.form-group
-          label.col-sm-2.control-label(for='username') Username
-          div.col-sm-4
-            input#username.form-control(type="text", name="username", placeholder="Username")
-        div.form-group
-          label.col-sm-2.control-label(for='Email') Email
-          div.col-sm-4
-            input#email.form-control(type="email", name="email" placeholder="Email")
-        div.form-group
-          label.col-sm-2.control-label(for='Password') Password
-          div.col-sm-4
-            input#password.form-control(type="password", name="password", placeholder="Password")
-        div.form-group
-          label.col-sm-2.control-label(for='password-confirm') Confirm
-          div.col-sm-4
-            input#password-confirm.form-control(type="password", name="password-confirm", placeholder="Confirm")
-        input.btn.btn-primary(type='submit')
-        button.btn.btn-link Play as guest
+  .page-header
+    h1 Home
+      small A place for typing

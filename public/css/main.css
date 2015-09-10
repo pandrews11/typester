@@ -2,3 +2,11 @@
   width: 40% !important;
   margin-left: 5%;
 }
+
+.navbar-right {
+  margin-right: 0px !important;
+}
+
+.alert {
+  margin: 2% !important;
+}
