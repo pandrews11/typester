@@ -2,7 +2,6 @@ var express  = require('express'),
     mongoose = require('mongoose'),
     router   = express.Router();
 
-
 router.route('/create')
   .post(function(req, res) {
     mongoose.model('Arena').create({}, function (err, arena) {

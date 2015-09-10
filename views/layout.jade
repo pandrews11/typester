@@ -9,7 +9,7 @@ html
     script(type='text/javascript', src='/js/arena.js')
   body
     nav.navbar.navbar-default
-      div.container-fluid
+      .container-fluid
         ul.nav.navbar-nav
           li(role='presentation')
             a(href='/') Home
@@ -45,11 +45,11 @@ html
               form.form-horizontal(action='login', method='post')
                 .form-group
                   label.col-sm-2.control-label Username
-                  div.col-sm-4
+                  .col-sm-4
                     input.form-control(type="text", name="username", placeholder="Username")
                 .form-group
                   label.col-sm-2.control-label Password
-                  div.col-sm-4
+                  .col-sm-4
                     input.form-control(type="password", name="password", placeholder="Password")
                 .modal-footer
                   button.btn.btn-default(type='button' data-dismiss='modal') Close

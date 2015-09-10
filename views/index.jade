@@ -1,15 +1,29 @@
 extends layout
 
 block content
-  div.container
-    div.jumbotron
-      h1 New Arena
+  .container
+    .jumbotron
+      h2 New Arena
       form.form-horizontal(action='arenas/create', method='post')
-        div.form-group
+        .form-group
           label.col-sm-2.control-label Type
-          div.col-sm-4
-            select(name='players').form-control
+          .col-sm-4
+            select.form-control(name='players')
               option(value='1') Singleplayer
               option(value='2') Multiplayer
-        input(name="userId" value=session.user._id)
+        .form-group
+          label.col-sm-2.control-label Difficulty
+          .col-sm-4
+            select.form-control(name='difficulty')
+              option(value='easy') Easy
+              option(value='medium') Medium
+              option(value='hard') Hard
+        .form-group
+          label.col-sm-2.control-label Time
+          .col-sm-4
+            select.form-control(name='time')
+              option(value='short') Short
+              option(value='normal') Normal
+              option(value='quick') Quick
+        input(name='userId' type='hidden' value=session.user._id)
         input.btn.btn-primary(type='submit')
