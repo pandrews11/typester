@@ -17,14 +17,16 @@ var routes = require('./routes/index'),
     arenas = require('./routes/arenas');
 
 var app = express();
-// app.set('port', 3000);
-// var server = http.createServer(app);
+app.set('port', 3000);
+
+var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-// server.listen(3000);
+server.listen(3000);
+
 // var io = require('socket.io')(server);
 
 app.set('view engine', 'jade');
@@ -47,17 +49,11 @@ app.use(session({
   secret: 'secret-string',
   resave: true,
   saveUninitialized: true,
-  store: new MongoStore({
-    db: 'typster_db',
-    host: 'localhost',
-    collection: 'session',
-    autoReconnect: true
-  })
+  store: new MongoStore({ mongooseConnection: db.connection })
 }));
 
 app.use(function(req, res, next) {
   res.locals.session = req.session;
-  req.db = db;
   next();
 });
 
