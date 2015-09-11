@@ -47,6 +47,7 @@ app.use(session({
 
 app.use(function(req, res, next) {
   res.locals.session = req.session;
+  req.db = db;
   next();
 });
 
@@ -56,7 +57,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/arenas', arenas);
 
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 

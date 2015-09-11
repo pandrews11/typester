@@ -1,9 +1,28 @@
 extends ../layout
 
 block content
-  h1
-    #{title}
-  ul
-    - each user, i in users
-      li
-          = user.username
+  table.table.table-striped
+    thead
+      tr
+        th #
+        th Username
+        th Email
+        - if (session.user && session.user.admin)
+          th Actions
+    tbody
+      - each user, u in users
+        tr
+          td 
+            = u + 1
+          td 
+            = user.username
+          td
+            = user.email
+          - if (session.user && session.user.admin)
+            td
+              form(action='/users/#{user._id}', method='POST')
+                input(type='hidden', name='_method', value='DELETE')
+                input.btn.btn-danger.btn-sm(type='submit', value='Delete')
+                
+           
+          

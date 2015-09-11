@@ -1,10 +1,12 @@
 var express  = require('express'),
-    router   = express.Router();
+    router   = express.Router(),
+    Arena    = require('../models/arenas'),
+    User     = require('../models/users');
 
 router.route('/create')
   .post(function(req, res) {
     Arena.create({}, function (err, arena) {
-      mongoose.model('User').findById(req.body.userId, function(err, user) {
+      User.findById(req.body.userId, function(err, user) {
         arena.users.push(user)
         arena.save();
       });

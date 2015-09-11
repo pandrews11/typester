@@ -8,7 +8,6 @@ router.route('/')
       res.format({
         html: function(){
           res.render('users/index', {
-            title: 'All Users',
             "users" : users
           });
         }
@@ -47,6 +46,17 @@ router.route('/:id')
             })
           }
         });
+      });
+    });
+  })
+  .delete(function(req, res, next) {
+    User.findById(req.params.id, function(err, user) {
+      user.remove(function(err) {
+        if (err) {
+          console.log(err)
+        } else {
+          res.redirect('/users')
+        }
       });
     });
   });

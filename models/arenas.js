@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
 
 var arenaSchema = new Schema({
   users: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  type: { type: String, required: true },
+  type: { type: String, required: true, default: 'singleplayer' },
   difficulty: { type: String, required: true, default: 'medium' },
   time: { type: String, required: true, default: 'normal' },
   created_at: { type: Date },
