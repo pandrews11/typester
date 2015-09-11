@@ -17,15 +17,14 @@ var routes = require('./routes/index'),
     arenas = require('./routes/arenas');
 
 var app = express();
-app.set('port', 3000);
-
+var port = process.env.PORT || 3000
 var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(3000);
+server.listen(port);
 
 // var io = require('socket.io')(server);
 
