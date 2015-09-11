@@ -7,8 +7,6 @@ block content
         li.active
           a(href='#' data-id='#profile') Profile
         li
-          a(href='#' data-id='#password') Password
-        li
           a(href='#' data-id='#statistics') Statistics
   
     .col-md-6
@@ -27,28 +25,14 @@ block content
                 .col-sm-6
                   input.form-control(type='email', name='email', value=user.email)
               .form-group
+                label.col-sm-4.control-label New Password
+                .col-sm-6
+                  input.form-control(type='password', name='password')
+              .form-group
                 label.col-sm-4.control-label Admin?
                 .col-sm-6
                   input(type='checkbox' name='admin' checked=(user.admin ? 'checked' : undefined))
               input.btn.btn-success(type='submit', value='Update Profile')
-      #password.tab-pane
-        .panel.panel-default
-          .panel-heading Password
-          .panel.panel-body
-            form.form-horizontal(action='/users/#{user._id}', method='post')
-              .form-group
-                label.col-sm-4.control-label Old Password
-                .col-sm-6
-                  input.form-control(type='text', name='oldPassword')
-              .form-group
-                label.col-sm-4.control-label New Password
-                .col-sm-6
-                  input.form-control(type='text', name='newPassword')
-              .form-group
-                label.col-sm-4.control-label Confirm New Password
-                .col-sm-6
-                  input.form-control(type='text', name='confirmNewPassword')
-            input.btn.btn-success(type='submit', value="Update Profile")
       #statistics.tab-pane
         .panel.panel-default
           .panel-heading Statistics

@@ -30,12 +30,16 @@ router.route('/:id')
   .put(function(req, res, next) {
     var username = req.body.username,
         email    = req.body.email,
-        admin    = req.body.admin || false;
+        admin    = req.body.admin || false,
+        password = req.body.password;
 
     User.findById(req.params.id, function(err, user) {
       user.username = username;
       user.email = email;
       user.admin = admin;
+      if (password)
+        user.password = password;
+
       user.save(function(err) {
         req.flash('success', 'Your profile has been updated');
         req.session.user = user;

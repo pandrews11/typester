@@ -15,15 +15,6 @@ var userSchema = new Schema({
   updated_at: {type: Date, default: Date.now }
 });
 
-userSchema.pre('save', function(next) {
-  var currentDate = new Date();
-
-  this.updated_at = currentDate;
-
-  if (!this.created_at)
-    this.created_at = currentDate;
-});
-
 // Instance Methods
 
 // userSchema.methods.isAdmin = function(cb) {
