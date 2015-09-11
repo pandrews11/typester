@@ -17,15 +17,15 @@ var routes = require('./routes/index'),
     arenas = require('./routes/arenas');
 
 var app = express();
-app.set('port', 3000);
-var server = http.createServer(app);
+// app.set('port', 3000);
+// var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(3000);
-var io = require('socket.io')(server);
+// server.listen(3000);
+// var io = require('socket.io')(server);
 
 app.set('view engine', 'jade');
 app.set('views', 'views');
@@ -73,12 +73,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static('public'));
 
-io.on('connection', function(socket) {
-  console.log('connection')
-  socket.on('arena-update', function(data) {
-    console.log(data);
-  });
-});
+// io.on('connection', function(socket) {
+//   console.log('connection')
+//   socket.on('arena-update', function(data) {
+//     console.log(data);
+//   });
+// });
 
 
 module.exports = app;
