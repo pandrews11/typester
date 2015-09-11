@@ -2,7 +2,7 @@
   "name": "typester",
   "version": "0.0.0",
   "description": "A typing game",
-  "scripts" : {
+  "scripts": {
     "configure": "./bin/configure",
     "start": "node ./bin/www"
   },
@@ -26,7 +26,7 @@
     "mongoose-error-helper": "0.0.2",
     "morgan": "~1.5.3",
     "serve-favicon": "~2.2.1",
-    "socket.io": "latest"
+    "socket.io": "^1.3.6"
   },
   "author": "Patrick Andrews"
 }

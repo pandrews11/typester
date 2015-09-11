@@ -1,4 +1,40 @@
 $(function() {
+
+  var socket = io.connect('http://localhost:3000');
+
+  socket.on('push', function(data) {
+    console.log(data);
+  });
+
+  $.fn.countdown = function() {
+    var start = $(this).text().split(':');
+    var minutes = parseInt(start[0]);
+    var seconds = parseInt(start[1]);
+
+    var $time = $(this);
+
+    var updateInterval = setInterval(function() {
+      seconds--;
+      socket.emit('arena-update', {
+        data: 'test'
+      });
+
+      if (seconds <= 0) {
+        seconds = 59;
+        if (minutes <= 0) {
+          clearInterval(updateInterval);
+          // finishCB();
+          return
+        }
+
+        if (minutes > 0) {
+          minutes--;
+        }
+      }
+      $time.text(String(minutes) + ':' + String(seconds));
+    }, 1000);
+  }
+
   $.fn.spanify = function() {
     $(this).each(function(el) {
       var $well = $(this),
@@ -21,10 +57,11 @@ $(function() {
 
     if (counter == 0) {
       released = true;
-      $('#starting-in').val('Go!');
+      $('#starting-in').text('Go!');
       clearInterval(interval);
+      $('#time-remaining').countdown();
     } else {
-      $('#starting-in').val('Game will start in ' + counter);
+      $('#starting-in').text('Game will start in ' + counter);
     }
   }, 1000);
 

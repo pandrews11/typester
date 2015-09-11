@@ -1,24 +1,30 @@
 extends ../layout
 
 block content
+  .row
+    .panel.panel-default.col-md-4.col-md-offset-1
+      .panel-body.text-center#starting-in Game will start in 5
+    .panel.panel-default.col-md-4.col-md-offset-2
+      .panel-body.text-center#time-remaining 00:30
+
   .well
     = 'But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?'
   p
     form
       .form-group
         .row
-          .col-md-4
-            textarea.form-control.typing-area(rows=2)
-          .col-sm-2
-            input.form-control.col-sm-4#starting-in(type='text' readonly, value='Game will start in 5')
           .col-md-6
-            .panel.panel-default
-              .panel-heading Players
-              table.table.table-left
-                thead
+            textarea.form-control.typing-area(rows=4)
+          .col-md-6
+            table.table.table-left.table-striped
+              thead
+                tr
+                  th Username
+                  th WPM
+                  th Accuracy
+              tbody
+                - each user, i in arena.users
                   tr
-                    th Username
-                tbody
-                  - each user, u in arena.users
-                    tr
-                      td= user.username
+                    td= user.username
+                    td= user.wordsPerMinute
+                    td= user.accuracy
