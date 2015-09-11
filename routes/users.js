@@ -1,10 +1,10 @@
 var express  = require('express'),
-    mongoose = require('mongoose'),
-    router   = express.Router();
+    router   = express.Router(),
+    User     = require('../models/users');
 
 router.route('/')
   .get(function(req, res, next) {
-    mongoose.model('User').find({}, function (err, users) {
+    User.find({}, function (err, users) {
       res.format({
         html: function(){
           res.render('users/index', {
@@ -16,25 +16,47 @@ router.route('/')
     });
   });
 
-  router.route('/:id')
-    .get(function(req, res, next) {
-      mongoose.model('User').findById(req.params.id, function (err, user) {
+router.route('/:id')
+  .get(function(req, res, next) {
+    User.findById(req.params.id, function (err, user) {
+      res.format({
+        html: function(){
+          res.render('users/show', {
+            "user" : user
+          });
+        }
+      });
+    });
+  })
+  .put(function(req, res, next) {
+    var username = req.body.username,
+        email    = req.body.email,
+        admin    = req.body.admin || false;
+
+    User.findById(req.params.id, function(err, user) {
+      user.username = username;
+      user.email = email;
+      user.admin = admin;
+      user.save(function(err) {
+        req.flash('success', 'Your profile has been updated');
+        req.session.user = user;
         res.format({
-          html: function(){
+          html: function() {
             res.render('users/show', {
-              "user" : user
-            });
+              'user': user
+            })
           }
         });
       });
     });
+  });
 
 router.route('/create')
   .post(function(req, res) {
     var username = req.body.username,
         email    = req.body.email,
         password = req.body.password;
-    mongoose.model('User').create({
+    User.create({
       username : username,
       email : email,
       password : password
@@ -54,49 +76,6 @@ router.route('/create')
           res.redirect('/');
         }
       });
-    });
-  });
-
-router.route('/login')
-  .get(function(req, res, next) {
-    res.format({
-      html: function() {
-        res.render('users/login')
-      }
-    });
-  })
-
-  .post(function(req, res) {
-    var username = req.body.username,
-        password = req.body.password;
-    mongoose.model('User').findOne({
-      username : username,
-      password : password
-    }, function(err, user) {
-      if (err || user === null) {
-        req.flash('error', 'Username or password are not correct');
-      } else {
-        req.session.user = user;
-        req.flash('success', 'Welcome ' + user.username);
-      }
-      res.format({
-        html: function() {
-          res.location('/');
-          res.redirect('/');
-        }
-      });
-    });
-  });
-
-router.route('/logout')
-  .get(function(req, res) {
-    req.session.user = null;
-    req.flash('success', 'Goodbye');
-    res.format({
-      html: function() {
-        res.location('/');
-        res.redirect('/');
-      }
     });
   });
 

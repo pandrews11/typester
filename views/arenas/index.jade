@@ -1,0 +1,35 @@
+extends ../layout
+
+block content
+  table.table.table-striped
+    thead
+      tr
+        th #
+        th Type
+        th Difficulty
+        th Time
+        th Players
+        - if (session.user.admin)
+          th Actions
+    tbody
+      - each arena, a in arenas
+        tr
+          td 
+            = a + 1
+          td 
+            = arena.type
+          td
+            = arena.difficulty
+          td
+            = arena.time
+          td
+            - each user, u in arena.users
+              = user.username
+          - if (session.user.admin)
+            td
+              form(action='/arenas/#{arena._id}', method='POST')
+                input(type='hidden', name='_method', value='DELETE')
+                input.btn.btn-danger.btn-sm(type='submit', value='Delete')
+                
+           
+          

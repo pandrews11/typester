@@ -9,13 +9,11 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 
 var db = require('./db');
-var user = require('./models/users');
-var arena = require('./models/arenas');
+var User = require('./models/users');
 
 var routes = require('./routes/index'),
     users = require('./routes/users'),
     arenas = require('./routes/arenas');
-
 
 var app = express();
 
@@ -34,6 +32,8 @@ app.use(methodOverride(function(req, res) {
 app.use(cookieParser('secret-string'));
 app.use(session({
   cookie: { maxAge: 60000 * 60 },
+  duration: 30 * 60 * 1000,
+  activeDuration: 5 * 60 * 1000,
   secret: 'secret-string',
   resave: true,
   saveUninitialized: true,

@@ -1,10 +1,9 @@
 var express  = require('express'),
-    mongoose = require('mongoose'),
     router   = express.Router();
 
 router.route('/create')
   .post(function(req, res) {
-    mongoose.model('Arena').create({}, function (err, arena) {
+    Arena.create({}, function (err, arena) {
       mongoose.model('User').findById(req.body.userId, function(err, user) {
         arena.users.push(user)
         arena.save();
@@ -19,8 +18,22 @@ router.route('/create')
   });
 
 router.route('/:id')
+  .delete(function(req, res) {
+    Arena.findById(req.params.id, function(err, arena) {
+      arena.remove(function(err) {
+        if (err) {
+          console.log(err)
+        } else {
+          res.redirect('/arenas')
+        }
+      })
+    })
+
+  });
+
+router.route('/:id')
   .get(function(req, res, next) {
-    mongoose.model('Arena').findById(req.params.id)
+    Arena.findById(req.params.id)
       .populate('users').exec( function(err, arena) {
       res.format({
         html: function() {
@@ -31,5 +44,19 @@ router.route('/:id')
       });
     });
   });
+
+  router.route('/')
+    .get(function(req, res, next) {
+      Arena.find({})
+        .populate('users').exec( function(err, arenas) {
+        res.format({
+          html: function() {
+            res.render('arenas', {
+              'arenas' : arenas
+            });
+          }
+        });
+      });
+    });
 
 module.exports = router;

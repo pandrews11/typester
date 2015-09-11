@@ -1,0 +1,71 @@
+extends ../layout
+
+block content
+  .conatainer-fluid
+    .col-md-2.col-md-offset-1
+      ul.nav.nav-pills.nav-stacked
+        li.active
+          a(href='#' data-id='#profile') Profile
+        li
+          a(href='#' data-id='#password') Password
+        li
+          a(href='#' data-id='#statistics') Statistics
+  
+    .col-md-6
+      #profile.tab-pane.active
+        .panel.panel-default
+          .panel-heading Profile
+          .panel.panel-body
+            form.form-horizontal(action='/users/#{user._id}', method='POST')
+              input(type="hidden" name="_method" value="PUT")
+              .form-group
+                label.col-sm-4.control-label Username
+                .col-sm-6
+                  input.form-control(type='text', name='username', value=user.username)
+              .form-group
+                label.col-sm-4.control-label Email
+                .col-sm-6
+                  input.form-control(type='email', name='email', value=user.email)
+              .form-group
+                label.col-sm-4.control-label Admin?
+                .col-sm-6
+                  input(type='checkbox' name='admin' checked=(user.admin ? 'checked' : undefined))
+              input.btn.btn-success(type='submit', value='Update Profile')
+      #password.tab-pane
+        .panel.panel-default
+          .panel-heading Password
+          .panel.panel-body
+            form.form-horizontal(action='/users/#{user._id}', method='post')
+              .form-group
+                label.col-sm-4.control-label Old Password
+                .col-sm-6
+                  input.form-control(type='text', name='oldPassword')
+              .form-group
+                label.col-sm-4.control-label New Password
+                .col-sm-6
+                  input.form-control(type='text', name='newPassword')
+              .form-group
+                label.col-sm-4.control-label Confirm New Password
+                .col-sm-6
+                  input.form-control(type='text', name='confirmNewPassword')
+            input.btn.btn-success(type='submit', value="Update Profile")
+      #statistics.tab-pane
+        .panel.panel-default
+          .panel-heading Statistics
+          .panel.panel-body
+            form.form-horizontal(action='/users/user._id', method='post')
+              .form-group
+                label.col-sm-4.control-label Games Played
+                .col-sm-6
+                  input.form-control(type='text', disabled='true', value='#{user.gamesPlayed}')
+              .form-group
+                label.col-sm-4.control-label WPM
+                .col-sm-6
+                  input.form-control(type='text', disabled='true', value='#{user.wordsPerMinute}')
+              .form-group
+                label.col-sm-4.control-label Accuracy
+                .col-sm-6
+                  input.form-control(type='text', disabled='true', value='#{user.accuracy}%')
+                  
+              
+    

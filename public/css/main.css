@@ -9,3 +9,7 @@ body {
 .alert {
   margin: 2% !important;
 }
+
+input[type=checkbox] {
+  margin: 10px 0 0 !important;
+}
