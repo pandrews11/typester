@@ -65,6 +65,29 @@ router.route('/:id')
     });
   });
 
+router.route('/:name/updateFromResults')
+  .put(function(req, res) {
+    var correctWords = req.body.correctWords,
+    wordsAttempted = req.body.wordsAttempted,
+    secondsPlayed = req.body.secondsPlayed;
+
+    User.findOne({username: req.params.name}, function(err, user) {
+      user.correctWords += correctWords;
+      user.wordsAttempted += wordsAttempted;
+      user.secondsPlayed += secondsPlayed;
+      user.gamesPlayed += 1;
+
+      user.save(function(err) {
+        req.session.user;
+        res.format({
+          json: function() {
+            res.send({update: 'success'});
+          }
+        });
+      });
+    });
+  });
+
 router.route('/create')
   .post(function(req, res) {
     var username = req.body.username,

@@ -6,32 +6,32 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
 var http = require('http');
+var MongoStore = require('connect-mongo')(session);
 
+var config = require('./config');
 var db = require('./db');
-var User = require('./models/users');
-
-var routes = require('./routes/index'),
-    users = require('./routes/users'),
-    arenas = require('./routes/arenas');
-
 var app = express();
-var port = process.env.PORT || 3000
+
+// Flash middleware
+app.use(flash());
+
+// Set database
+db.connect(config.db[app.get('env')]);
+
+// Set port
+var port = process.env.PORT || 3000;
 app.set('port', port);
 
+// Create server
 var server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
 server.listen(port);
 
-// var io = require('socket.io')(server);
 
 app.set('view engine', 'jade');
 app.set('views', 'views');
+
+app.use(express.static('public'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride(function(req, res) {
@@ -58,18 +58,15 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use(flash());
+// Set routes
+app.use('/', require('./routes/index'));
+app.use('/users', require('./routes/users'));
+app.use('/arenas', require('./routes/arenas'));
 
-app.use('/', routes);
-app.use('/users', users);
-app.use('/arenas', arenas);
 
-app.use(logger('combined'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-
-app.use(express.static('public'));
-
+// Web sockets
+// var io = require('socket.io')(server);
+//
 // io.on('connection', function(socket) {
 //   console.log('connection')
 //   socket.on('arena-update', function(data) {

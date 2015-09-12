@@ -1,28 +1,29 @@
 extends ../layout
 
 block content
-  table.table.table-striped
-    thead
-      tr
-        th #
-        th Username
-        th Email
-        - if (session.user && session.user.admin)
-          th Actions
-    tbody
-      - each user, u in users
+  .panel.panel-default
+    table.table.table-striped.table-bordered
+      thead
         tr
-          td 
-            = u + 1
-          td 
-            = user.username
-          td
-            = user.email
+          th #
+          th Username
+          th Email
           - if (session.user && session.user.admin)
+            th Actions
+      tbody
+        - each user, u in users
+          tr
+            td 
+              = u + 1
+            td 
+              = user.username
             td
-              form(action='/users/#{user._id}', method='POST')
-                input(type='hidden', name='_method', value='DELETE')
-                input.btn.btn-danger.btn-sm(type='submit', value='Delete')
+              = user.email
+            - if (session.user && session.user.admin)
+              td
+                form(action='/users/#{user._id}', method='POST')
+                  input(type='hidden', name='_method', value='DELETE')
+                  input.btn.btn-danger.btn-sm(type='submit', value='Delete')
                 
            
           

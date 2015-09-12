@@ -16,15 +16,40 @@ block content
           .col-md-6
             textarea.form-control.typing-area(rows=4)
           .col-md-6
-            table.table.table-left.table-striped
-              thead
-                tr
-                  th Username
-                  th WPM
-                  th Accuracy
-              tbody
-                - each user, i in arena.users
+            .panel.panel-default
+              table.table.table-left.table-striped.table-bordered
+                thead
                   tr
-                    td= user.username
-                    td= user.wordsPerMinute
-                    td= user.accuracy
+                    th Username
+                    th WPM
+                    th Accuracy
+                tbody
+                  - each user, i in arena.users
+                    tr
+                      td.username= user.username
+                      td.wpm 0
+                      td.accuracy 0%
+  #results-modal.modal.fade(tabindex='-1', role='dialog')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(data-dismiss='modal') &times;
+          h3.modal-title Results
+          .modal-body
+            form.form-horizontal(action='/users/#', method='post')
+              input(type="hidden" name="_method" value="PUT")
+              .form-group
+                label.col-sm-4.control-label Time Played
+                .col-sm-4
+                  input.form-control#time-played(type="text", disabled='true', name="time")
+              .form-group
+                label.col-sm-4.control-label WPM
+                .col-sm-4
+                  input.form-control#wpm(type="text", disabled='true', name="wpm")
+              .form-group
+                label.col-sm-4.control-label Accuracy
+                .col-sm-4
+                  input.form-control#accuracy(type="text", disabled='true', name="accuracy")
+              .modal-footer
+                button.btn.btn-primary(type='button' data-dismiss='modal') OK
+          
