@@ -31,7 +31,7 @@ var userSchema = new Schema({
 // Virtual Methods (attr_accessor sort of)
 
 userSchema.virtual('wordsPerMinute').get(function() {
-  return this.correctWords / (this.secondsPlayed / 60);
+  return String(this.correctWords / (this.secondsPlayed / 60)).split('.')[0];
 });
 
 userSchema.virtual('accuracy').get(function() {
