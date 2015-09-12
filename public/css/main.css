@@ -29,3 +29,7 @@ input[type=checkbox] {
 textarea {
   resize: none;
 }
+
+a.guest-login {
+  margin-left: 15px;
+}

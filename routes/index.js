@@ -19,7 +19,6 @@ router.route('/login')
       }
     });
   })
-
   .post(function(req, res) {
     var username = req.body.username,
         password = req.body.password;
@@ -40,6 +39,15 @@ router.route('/login')
       });
     });
   });
+
+  router.route('/login/guest')
+    .get(function(req, res, next) {
+      User.findOne({username: 'guest'}, function(err, user) {
+        req.session.user = user;
+        res.redirect('/');
+      });
+    });
+
 
 router.route('/logout')
   .get(function(req, res) {

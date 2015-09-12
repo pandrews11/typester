@@ -18,13 +18,17 @@ router.route('/')
 router.route('/:id')
   .get(function(req, res, next) {
     User.findById(req.params.id, function (err, user) {
-      res.format({
-        html: function(){
-          res.render('users/show', {
-            "user" : user
-          });
-        }
-      });
+      if (user.username == 'guest') {
+        res.redirect('/')
+      } else {
+        res.format({
+          html: function(){
+            res.render('users/show', {
+              "user" : user
+            });
+          }
+        });
+      }
     });
   })
   .put(function(req, res, next) {
@@ -88,15 +92,12 @@ router.route('/:name/updateFromResults')
     });
   });
 
-router.route('/create')
+router.route('/create/')
   .post(function(req, res) {
-    var username = req.body.username,
-        email    = req.body.email,
-        password = req.body.password;
     User.create({
-      username : username,
-      email : email,
-      password : password
+      username : req.body.username,
+      email : req.body.email,
+      password : req.body.password
     }, function(err, user) {
       if (err) {
         var errorMessages = ''

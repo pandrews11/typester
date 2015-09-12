@@ -16,7 +16,8 @@ block content
             td 
               = u + 1
             td 
-              = user.username
+              a(href='/users/#{user._id}')
+                = user.username
             td
               = user.email
             - if (session.user && session.user.admin)

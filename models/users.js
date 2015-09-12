@@ -5,14 +5,14 @@ var Schema = mongoose.Schema;
 
 // Schema
 var userSchema = new Schema({
-  username: { type: String, required: true, trim: true, unique: true },
+  username: { type: String, required: true, trim: true },
   admin: { type: Boolean, required: true, default: false },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, select: false, required: true },
+  email: { type: String, unique: true },
+  password: { type: String, select: false },
   correctWords: {type: Number, default: 0},
   wordsAttempted: {type: Number, default: 0},
   secondsPlayed: {type: Number, default: 0},
-  gamesPlayed: { type: Number, require: true, default: 0 },
+  gamesPlayed: { type: Number, default: 0 },
   created_at: { type: Date },
   updated_at: {type: Date, default: Date.now }
 });
@@ -36,7 +36,6 @@ userSchema.virtual('wordsPerMinute').get(function() {
 });
 
 userSchema.virtual('timePlayed').get(function() {
-  console.log(this.secondsPlayed);
   return moment().startOf('day').add(this.secondsPlayed, 's').format('HH:mm:ss');
 });
 
@@ -45,4 +44,27 @@ userSchema.virtual('accuracy').get(function() {
 });
 
 var User = mongoose.model('User', userSchema);
+
+User.findOne({username: 'admin'}, function(err, user) {
+  if (!user) {
+    User.create({
+      username: 'admin',
+      email: 'admin@admin.com',
+      password: 'admin',
+      admin: true
+    })
+  }
+});
+
+User.findOne({username: 'guest'}, function(err, user) {
+  if (!user) {
+    User.create({
+      username: 'guest',
+      email: 'guest@guest.com',
+      password: 'guest',
+      admin: false
+    });
+  }
+});
+
 module.exports = User;
