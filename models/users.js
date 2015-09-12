@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var moment = require('moment');
 var Schema = mongoose.Schema;
 
 
@@ -32,6 +33,11 @@ var userSchema = new Schema({
 
 userSchema.virtual('wordsPerMinute').get(function() {
   return (this.correctWords / (this.secondsPlayed / 60)).toFixed(3);
+});
+
+userSchema.virtual('timePlayed').get(function() {
+  console.log(this.secondsPlayed);
+  return moment().startOf('day').add(this.secondsPlayed, 's').format('HH:mm:ss');
 });
 
 userSchema.virtual('accuracy').get(function() {
