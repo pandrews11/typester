@@ -1,0 +1,8 @@
+- if (messages.error)
+  .alert.alert-warning.fade.in(role="alert")
+    a.close(href='#', data-dismiss='alert') &times;
+    span= messages.error
+- if (messages.success)
+  .alert.alert-success.fade.in(role="alert")
+    a.close(href='#', data-dismiss='alert') &times;
+    span= messages.success

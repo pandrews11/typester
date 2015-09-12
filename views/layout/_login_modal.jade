@@ -1,0 +1,19 @@
+#login-modal.modal.fade(tabindex='-1', role='dialog')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(data-dismiss='modal') &times;
+        h3.modal-title Login
+        .modal-body
+          form.form-horizontal(action='/login', method='post')
+            .form-group
+              label.col-sm-2.control-label Username
+              .col-sm-4
+                input.form-control(type="text", name="username", placeholder="Username")
+            .form-group
+              label.col-sm-2.control-label Password
+              .col-sm-4
+                input.form-control(type="password", name="password", placeholder="Password")
+            .modal-footer
+              button.btn.btn-default(type='button' data-dismiss='modal') Close
+              input.btn.btn-primary(type='submit')

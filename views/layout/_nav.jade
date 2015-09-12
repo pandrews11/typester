@@ -1,0 +1,20 @@
+nav.navbar.navbar-default
+  .container-fluid
+    ul.nav.navbar-nav
+      li
+        a(href='/') Home
+      li
+        a(href='/arenas') Arenas
+      - if (session.user && session.user.admin)
+        li
+          a(href='/users') Users
+    ul.nav.navbar-nav.navbar-right
+      li
+      - if (session.user)
+          p.navbar-text.navbar-right 
+            a(href='/logout') Logout
+          p.navbar-text.navbar-right Signed in as 
+            a(href='/users/#{session.user._id}') 
+             = session.user.username
+      - else
+          button.btn.btn-default.navbar-btn.navbar-right(data-toggle='modal', data-target='#login-modal') Login

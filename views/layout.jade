@@ -1,68 +1,13 @@
 html
-  head
-    title typester
-    link(rel='stylesheet', href='/css/main.css')
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
-
-    script(type='text/javascript', src='https://code.jquery.com/jquery.min.js')
-    script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
-    //- script(type='text/javascript', src='https://cdn.socket.io/socket.io-1.0.0.js')
-    script(type='text/javascript', src='/js/helpers.js')
-    script(type='text/javascript', src='/js/users.js')
-    block extendedHead
+  include layout/_head
 
   body
-    nav.navbar.navbar-default
-      .container-fluid
-        ul.nav.navbar-nav
-          li
-            a(href='/') Home
-          li
-            a(href='/arenas') Arenas
-          - if (session.user && session.user.admin)
-            li
-              a(href='/users') Users
-        ul.nav.navbar-nav.navbar-right
-          li
-          - if (session.user)
-              p.navbar-text.navbar-right 
-                a(href='/logout') Logout
-              p.navbar-text.navbar-right Signed in as 
-                a(href='/users/#{session.user._id}') 
-                 = session.user.username
-          - else
-              button.btn.btn-default.navbar-btn.navbar-right(data-toggle='modal', data-target='#login-modal') Login
-
-    - if (messages.error)
-      .alert.alert-warning.fade.in(role="alert")
-        a.close(href='#', data-dismiss='alert') &times;
-        span= messages.error
-    - if (messages.success)
-      .alert.alert-success.fade.in(role="alert")
-        a.close(href='#', data-dismiss='alert') &times;
-        span= messages.success
+    include layout/_nav
+    include layout/_flash
+    include layout/_login_modal
 
     block content
     
-    #login-modal.modal.fade(tabindex='-1', role='dialog')
-      .modal-dialog
-        .modal-content
-          .modal-header
-            button.close(data-dismiss='modal') &times;
-            h3.modal-title Login
-            .modal-body
-              form.form-horizontal(action='/login', method='post')
-                .form-group
-                  label.col-sm-2.control-label Username
-                  .col-sm-4
-                    input.form-control(type="text", name="username", placeholder="Username")
-                .form-group
-                  label.col-sm-2.control-label Password
-                  .col-sm-4
-                    input.form-control(type="password", name="password", placeholder="Password")
-                .modal-footer
-                  button.btn.btn-default(type='button' data-dismiss='modal') Close
-                  input.btn.btn-primary(type='submit')
             
     
     
