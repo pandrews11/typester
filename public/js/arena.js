@@ -1,131 +1,55 @@
 $(function() {
 
-  // var socket = io();
+  var totalSeconds;
 
-  var totalTime;
+  var socket    = io(),
+  arenaReleased = false;
 
-  var finalTotalSeconds;
-
-  // socket.on('push', function(data) {
-  //   console.log(data);
-  // });
-
-  $.fn.countdown = function(finished) {
-    totalTime = $(this).text();
-    var start = $(this).text().split(':');
-    var minutes = parseInt(start[0]);
-    var seconds = parseInt(start[1]);
-
-    var totalSeconds = (minutes / 60) + seconds;
-
-    finalTotalSeconds = totalSeconds;
-
-    var $time = $(this);
-
-    var updateInterval = setInterval(function() {
-      seconds--;
-      updateWPM(totalSeconds - seconds);
-      updateAccuracy();
-      // socket.emit('arena-update', {
-        // data: 'test'
-      // });
-
-      if (seconds <= 0) {
-        seconds = 59;
-        if (minutes <= 0) {
-          seconds = 0;
-          $time.setTime(minutes, seconds);
-          clearInterval(updateInterval);
-          finished();
-        }
-
-        if (minutes > 0) {
-          minutes--;
-        }
-      }
-      $time.setTime(minutes, seconds);
-    }, 1000);
+  function getArenaID() {
+    return window.location.pathname.split('/').pop();
   }
 
-  $.fn.setTime = function(min, sec) {
-    var strMin = String(min).leftJustify(2, '0'),
-        strSec = String(sec).leftJustify(2, '0');
-
-    $(this).text(strMin + ':' + strSec);
+  function correctWords() {
+    return $('.well span[complete=true]').length;
   }
 
-  $.fn.spanify = function() {
-    $(this).each(function(el) {
-      var $well = $(this),
-           text = $(this).text().split(' ');
+  function wordsAttempted() {
+    return correctWords() + $('.well span[complete=false]').length
+  }
 
-      $well.empty();
-      $.each(text, function(i, v) {
-        $well.append($("<span>").attr('data-word', i).text(v + ' '))
-      });
-    })
+  function accuracy() {
+    return (correctWords() / wordsAttempted()) * 100;
   }
 
   function updateWPM(seconds) {
-    var correctWordCount = $('.well span[complete=true]').length;
-    $('.wpm')
-      .text(String((correctWordCount / seconds) * 60).split('.')[0]);
+    $('.wpm').text(((correctWords() / seconds) * 60).toFixed(3));
   }
 
   function updateAccuracy() {
-    var correctCount = $('.well span[complete=true]').length;
-    var totalAttempted = correctCount + ($('.well span[complete=false]').length);
-
-    var accuracy = (correctCount / totalAttempted) * 100;
-
-    if (isNaN(accuracy))
-      accuracy = 0;
-    $('.accuracy').text(String(accuracy).split('.')[0] + '%');
+    if (!isNaN(accuracy()))
+      $('.accuracy').text((accuracy()).toFixed(3) + '%');
   }
 
-  var finished = function(){
-    $('#starting-in').text("Time's up!");
+  function startArena() {
+    var countDown = 5;
 
-    $('.typing-area').attr('disabled', true);
-    $('#results-modal').modal('show');
+    var interval = setInterval(function() {
+      countDown--;
 
-    $('#results-modal #time-played').val(totalTime);
-    $('#results-modal #wpm').val($('.wpm').text());
-    $('#results-modal #accuracy').val($('.accuracy').text());
+      if (countDown == 0) {
+        clearInterval(interval);
+        arenaReleased = true;
 
-    $.ajax({
-      url: '/users/' + $('.username').text() + '/updateFromResults',
-      dataType: 'json',
-      method: 'put',
-      data: {
-        correctWords: $('.well span[complete=true]').length,
-        wordsAttempted: $('.well span[complete=true]').length + $('.well span[complete=false]').length,
-        secondsPlayed: finalTotalSeconds
+        $('#starting-in').text('Go!');
+        $('#time-remaining').countdown(finished);
+      } else {
+        $('#starting-in').text('Game will start in ' + countDown);
       }
-    });
-    return;
+    }, 1000);
   }
-
-  $('.well').spanify();
-
-  var released = false;
-  var counter = 5;
-
-  var interval = setInterval(function() {
-    counter--;
-
-    if (counter == 0) {
-      released = true;
-      $('#starting-in').text('Go!');
-      clearInterval(interval);
-      $('#time-remaining').countdown(finished);
-    } else {
-      $('#starting-in').text('Game will start in ' + counter);
-    }
-  }, 1000);
 
   $('.typing-area').keydown(function(e) {
-    if (released === false)
+    if (arenaReleased === false)
       return false;
 
     if (e.keyCode == 32 || e.keyCode == 8) {
@@ -141,9 +65,87 @@ $(function() {
             .attr('complete', false)
             .css('color', 'black');
         }
-      })
+      });
     }
-  })
+  });
+
+  socket.emit('join', {
+    arenaID: getArenaID()
+  });
+
+  socket.on('beginCountdown', function(data) {
+    if (data.arenaID == getArenaID()) {
+      $('.well').spanify();
+      startArena();
+    }
+  });
 
 
+  $.fn.countdown = function(finished) {
+    var start = $(this).text().split(':');
+
+    totalSeconds = moment(0)
+      .minutes(parseInt(start[0])).seconds(parseInt(start[1])).unix();
+
+    var elapsedSeconds = totalSeconds;
+    var $time = $(this);
+
+    var updateInterval = setInterval(function() {
+      elapsedSeconds--;
+      updateWPM(totalSeconds - elapsedSeconds);
+      updateAccuracy();
+
+      $time.text(
+        moment(0).seconds(elapsedSeconds).format('mm:ss')
+      );
+
+      if (elapsedSeconds == 0) {
+        clearInterval(updateInterval);
+        finished();
+      }
+
+    }, 1000);
+  }
+
+  function populateResults() {
+    $('#results-modal #time-played').val(
+      moment(0).seconds(totalSeconds).format('mm:ss')
+    );
+
+    $('#results-modal #wpm').val($('.wpm').text());
+    $('#results-modal #accuracy').val($('.accuracy').text());
+  }
+
+  function getResultsJSON() {
+    return {
+      correctWords: correctWords(),
+      wordsAttempted: wordsAttempted(),
+      secondsPlayed: totalSeconds
+    }
+  }
+
+  var finished = function(){
+    $('#starting-in').text("Time's up!");
+
+    $('.typing-area').attr('disabled', true);
+    $('#results-modal').modal('show');
+
+    populateResults();
+
+    $.ajax({
+      url: '/users/' + $('.username').text() + '/updateFromResults',
+      dataType: 'json',
+      method: 'put',
+      data: getResultsJSON()
+    });
+    return;
+  }
+
+  $('#results-modal').on('hidden.bs.modal', function() {
+    socket.emit('gameover', {
+      arenaID: getArenaID()
+    });
+
+    window.location.replace(window.location.origin);
+  });
 });

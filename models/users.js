@@ -31,11 +31,11 @@ var userSchema = new Schema({
 // Virtual Methods (attr_accessor sort of)
 
 userSchema.virtual('wordsPerMinute').get(function() {
-  return String(this.correctWords / (this.secondsPlayed / 60)).split('.')[0];
+  return (this.correctWords / (this.secondsPlayed / 60)).toFixed(3);
 });
 
 userSchema.virtual('accuracy').get(function() {
-  return String((this.correctWords / this.wordsAttempted) * 100).split('.')[0];
+  return ((this.correctWords / this.wordsAttempted) * 100).toFixed(3);
 });
 
 var User = mongoose.model('User', userSchema);

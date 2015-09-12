@@ -6,7 +6,7 @@ block content
       thead
         tr
           th #
-          th Type
+          th Mode
           th Difficulty
           th Time
           th Players
@@ -18,11 +18,11 @@ block content
             td 
               = a + 1
             td 
-              = arena.type
+              = arena.formattedMode
             td
-              = arena.difficulty
+              = arena.formattedDifficulty
             td
-              = arena.time
+              = arena.formattedTime
             td
               - each user, u in arena.users
                 = user.username

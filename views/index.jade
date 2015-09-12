@@ -6,11 +6,11 @@ block content
       h2 New Arena
       form.form-horizontal(action='arenas/create', method='post')
         .form-group
-          label.col-sm-2.control-label Type
+          label.col-sm-2.control-label Mode
           .col-sm-4
-            select.form-control(name='players')
-              option(value='1') Singleplayer
-              option(value='2') Multiplayer
+            select.form-control(name='mode')
+              option(value='singleplayer') Singleplayer
+              option(value='multiplayer') Multiplayer
         .form-group
           label.col-sm-2.control-label Difficulty
           .col-sm-4
@@ -22,8 +22,8 @@ block content
           label.col-sm-2.control-label Time
           .col-sm-4
             select.form-control(name='time')
-              option(value='short') Short
-              option(value='normal') Normal
-              option(value='quick') Quick
+              option(value='30') 00:30
+              option(value='60') 01:00
+              option(value='120') 02:00
         input(name='userId' type='hidden' value=session.user._id)
         input.btn.btn-success(type='submit', value='Play')

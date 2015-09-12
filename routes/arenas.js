@@ -5,7 +5,14 @@ var express  = require('express'),
 
 router.route('/create')
   .post(function(req, res) {
-    Arena.create({}, function (err, arena) {
+    var mode = req.body.mode,
+        time = req.body.time,
+        difficulty = req.body.difficulty;
+    Arena.create({
+      mode: mode,
+      time: time,
+      difficulty: difficulty
+    }, function (err, arena) {
       User.findById(req.body.userId, function(err, user) {
         arena.users.push(user)
         arena.save();
