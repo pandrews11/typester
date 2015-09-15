@@ -5,8 +5,17 @@ $(function() {
   var socket    = io(),
   arenaReleased = false;
 
+  // Tell the server which arena we have joined
+  socket.emit('join', {
+    arenaID: getArenaID()
+  });
+
   function getArenaID() {
     return window.location.pathname.split('/').pop();
+  }
+
+  function getUserID() {
+    return $('#user-id').val();
   }
 
   function correctWords() {
@@ -69,10 +78,6 @@ $(function() {
     }
   });
 
-  socket.emit('join', {
-    arenaID: getArenaID()
-  });
-
   socket.on('beginCountdown', function(data) {
     if (data.arenaID == getArenaID()) {
       $('.well').spanify();
@@ -82,6 +87,9 @@ $(function() {
 
 
   $.fn.countdown = function(finished) {
+    initializeStatusVisualization();
+    getUsersTable();
+
     var start = $(this).text().split(':');
 
     totalSeconds = moment(0)
@@ -92,19 +100,28 @@ $(function() {
 
     var updateInterval = setInterval(function() {
       elapsedSeconds--;
-      updateWPM(totalSeconds - elapsedSeconds);
-      updateAccuracy();
+
+      updateLocalStats(totalSeconds - elapsedSeconds)
+      postStatus();
+
+      socket.emit('get-update', { arenaID: getArenaID() });
 
       $time.text(
         moment(0).seconds(elapsedSeconds).format('mm:ss')
       );
 
       if (elapsedSeconds == 0) {
-        clearInterval(updateInterval);
-        finished();
+        // clearInterval(updateInterval);
+        // finished();
+        true
       }
 
     }, 1000);
+  }
+
+  function updateLocalStats(seconds) {
+    updateWPM(seconds);
+    updateAccuracy();
   }
 
   function populateResults() {
@@ -139,6 +156,38 @@ $(function() {
       data: getResultsJSON()
     });
     return;
+  }
+
+  function initializeStatusVisualization() {
+    socket.on('update', function(data) {
+      console.log(data);
+    });
+  };
+
+  function createStatusHash() {
+    var status = {}
+    $('.well span').each(function(i, v) {
+      status[i] = $(v).attr('complete') == 'true'
+    });
+    return status;
+  }
+
+  function postStatus() {
+    socket.emit('update', {
+      userId: getUserID(),
+      status: createStatusHash()
+    })
+  }
+
+  function getUsersTable() {
+    $.ajax({
+      url: '/arenas/statusUpdate/' + getArenaID(),
+      dataType: 'html',
+      method: 'get',
+      success: function(data) {
+        $('#user-stats-wrapper').html(data);
+      }
+    });
   }
 
   $('#results-modal').on('hidden.bs.modal', function() {

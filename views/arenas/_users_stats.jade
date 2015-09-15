@@ -1,0 +1,12 @@
+table.table.table-left.table-striped.table-bordered
+  thead
+    tr
+      th Username
+      th WPM
+      th Accuracy
+  tbody
+    - each user, i in arena.users
+      tr
+        td.username= user.username
+        td.wpm 0
+        td.accuracy 0%

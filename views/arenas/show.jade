@@ -20,19 +20,10 @@ block content
           .col-md-6
             textarea.form-control.typing-area(rows=4)
           .col-md-6
-            .panel.panel-default
-              table.table.table-left.table-striped.table-bordered
-                thead
-                  tr
-                    th Username
-                    th WPM
-                    th Accuracy
-                tbody
-                  - each user, i in arena.users
-                    tr
-                      td.username= user.username
-                      td.wpm 0
-                      td.accuracy 0%
+            .panel.panel-default#user-stats-wrapper
+              include _users_stats
+
+  input#user-id(type='hidden', value=session.user._id)
                 
                       
   #results-modal.modal.fade(tabindex='-1', role='dialog')

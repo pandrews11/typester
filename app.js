@@ -7,7 +7,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var session = require('express-session');
-var _ = require('underscore')._;
 var http = require('http');
 var MongoStore = require('connect-mongo')(session);
 
@@ -67,33 +66,76 @@ app.use('/arenas', require('./routes/arenas'));
 
 // Set models
 var Arena = require('./models/arenas');
+var User = require('./models/users');
 
 // Web sockets
 var io = require('socket.io')(server);
 
 io.on('connection', function(socket) {
+
+  // Wait for correct number of users to join a given arena
+  // When correct number of players join arena, emit `beginCountdown`
   socket.on('join', function(data) {
+    socket.join(data.arenaID);
     Arena.findById(data.arenaID, function(err, arena) {
       arena.playersQueued += 1;
+
+      console.log(arena.playersQueued + ' players joined arena: ' + data.arenaID);
+
       arena.save(function(err) {
         if (arena.mode == 'singleplayer' && arena.playersQueued == 1)
-          socket.emit('beginCountdown', { arenaID: arena._id });
+          io.in(arena._id).emit('beginCountdown', { arenaID: arena._id });
         if (arena.mode == 'multiplayer' && arena.playersQueued == 2)
-          socket.emit('beginCountdown', { arenaID: arena._id })
+          io.in(arena._id).emit('beginCountdown', { arenaID: arena._id })
       });
     });
   });
 
+  // When client pushes an update, store visualization data.
   socket.on('update', function(data) {
-    console.log(data);
+    User.findById(data.userId, function(err, user) {
+      user.currentStatus = JSON.stringify(data.status);
+      user.save();
+    })
+  });
+
+  // When client asked for an update, push them relevant information
+  socket.on('get-update', function(data) {
+    Arena.findById(data.arenaID)
+      .populate('users').exec( function(err, arena) {
+
+      var users = arena.users;
+
+      if (users.length > 1)
+        io.in(arena._id).emit('update', { '1': users[0], '2': users[1] });
+
+    });
   });
 
   socket.on('gameover', function(data) {
+    socket.leave(data.arenaID);
     Arena.findById(data.arenaID, function(err, arena) {
+      arena.users.each(function(user) {
+        user.currentStatus = '';
+        user.save;
+      });
       arena.remove(function(err) {})
     });
   });
 });
+
+function combinedStatusHash(user1, user2) {
+  var user1ID = user1._id;
+  var user2ID = user2._id;
+  var combinedStatus = {user1ID: {}, user2ID: {}}
+
+  JSON.parse(user1.currentStatus).each(function(i, v) {
+    combinedStatus[user1._id][i] = v;
+    combinedStatus[user2._id][i] = JSON.parse(user2.currentStatus)[i];
+  });
+
+  return combinedStatus;
+}
 
 
 module.exports = app;

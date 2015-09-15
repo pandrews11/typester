@@ -9,10 +9,16 @@ var userSchema = new Schema({
   admin: { type: Boolean, required: true, default: false },
   email: { type: String, unique: true },
   password: { type: String, select: false },
+
   correctWords: {type: Number, default: 0},
   wordsAttempted: {type: Number, default: 0},
   secondsPlayed: {type: Number, default: 0},
   gamesPlayed: { type: Number, default: 0 },
+
+  currentStatus: {type: String},
+  currentWPM: { type: Number},
+  currentAccuracy: { type: String},
+
   created_at: { type: Date },
   updated_at: {type: Date, default: Date.now }
 });
@@ -45,6 +51,8 @@ userSchema.virtual('accuracy').get(function() {
 
 var User = mongoose.model('User', userSchema);
 
+
+// Create default users
 User.findOne({username: 'admin'}, function(err, user) {
   if (!user) {
     User.create({
