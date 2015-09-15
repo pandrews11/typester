@@ -20,43 +20,35 @@ router.route('/login')
     });
   })
   .post(function(req, res) {
-    var username = req.body.username,
-        password = req.body.password;
     User.findOne({
-      username : username,
-      password : password
+      username : req.body.username,
+      password : req.body.password
     }, function(err, user) {
+
       if (err || user === null) {
         req.flash('error', 'Username or password are not correct');
       } else {
         req.session.user = user;
         req.flash('success', 'Welcome ' + user.username);
       }
-      res.format({
-        html: function() {
-          res.redirect('/');
-        }
-      });
+
+      res.redirect('/')
     });
   });
 
-  router.route('/login/guest')
-    .get(function(req, res, next) {
-      User.findOne({username: 'guest'}, function(err, user) {
-        req.session.user = user;
-        res.redirect('/');
-      });
+router.route('/login/guest')
+  .get(function(req, res, next) {
+    User.findOne({username: 'guest'}, function(err, user) {
+      req.session.user = user;
+      res.redirect('/');
     });
+  });
 
 
 router.route('/logout')
   .get(function(req, res) {
     req.session.destroy();
-    res.format({
-      html: function() {
-        res.redirect('/');
-      }
-    });
+    res.redirect('/');
   });
 
 module.exports = router;

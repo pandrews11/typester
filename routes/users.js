@@ -71,14 +71,10 @@ router.route('/:id')
 
 router.route('/:name/updateFromResults')
   .put(function(req, res) {
-    var correctWords = req.body.correctWords,
-    wordsAttempted = req.body.wordsAttempted,
-    secondsPlayed = req.body.secondsPlayed;
-
     User.findOne({username: req.params.name}, function(err, user) {
-      user.correctWords += Number(correctWords);
-      user.wordsAttempted += Number(wordsAttempted);
-      user.secondsPlayed += Number(secondsPlayed);
+      user.correctWords += Number(req.body.correctWords);
+      user.wordsAttempted += Number(req.body.wordsAttempted);
+      user.secondsPlayed += Number(req.body.secondsPlayed);
       user.gamesPlayed += 1;
 
       user.save(function(err) {
