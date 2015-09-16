@@ -121,9 +121,6 @@ io.on('connection', function(socket) {
         user.save;
       });
     });
-    if (arena.users.length == 0) {
-      arena.remove();
-    }
   });
 });
 
