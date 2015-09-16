@@ -112,16 +112,19 @@ io.on('connection', function(socket) {
 
   socket.on('gameover', function(data) {
     socket.leave(data.arenaID);
-    Arena.findById(data.arenaID)
-      .populate('users').exec(function(err, arena) {
-      arena.users.each(function(user) {
-        user.currentStatus = '';
-        user.currentWPM = 0;
-        user.currentAccuracy = '0%'
-        user.save;
-      });
+    Arena.findById(data.arenaID).populate('users').exec(function(err, arena) {
+      arena.users.forEach(clearCurrentStats);
+      arena.users = [];
+      arena.save;
     });
   });
 });
+
+function clearCurrentStats(user, index, array) {
+  user.currentStatus = '';
+  user.currentWPM = 0;
+  user.currentAccuracy = '0%'
+  user.save;
+}
 
 module.exports = app;

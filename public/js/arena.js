@@ -5,6 +5,8 @@ $(function() {
   var socket    = io(),
   arenaReleased = false;
 
+  var user = new User($('#user-id').val())
+
   // Tell the server which arena we have joined
   socket.emit('join', {
     arenaID: getArenaID()
@@ -18,42 +20,23 @@ $(function() {
     return $('#user-id').val();
   }
 
-  function userRow() {
-    return $('tr[data-id=' + getUserID() + ']');
-  }
-
   function correctWords() {
     return $('.well span[complete=true]').length;
   }
 
-  function wordsAttempted() {
+  function totalWords() {
     return correctWords() + $('.well span[complete=false]').length
   }
 
-  function getCurrentWPM() {
-    return userRow().find('.wpm').text();
-  }
-
-  function getCurrentAccuracy() {
-    return userRow().find('.accuracy').text();
-  }
-
-  function accuracy() {
-    return (correctWords() / wordsAttempted()) * 100;
-  }
-
-  function updateWPM(seconds) {
-    userRow().find('.wpm').text(((correctWords() / seconds) * 60).toFixed(3));
-  }
-
-  function updateAccuracy() {
-    if (!isNaN(accuracy()))
-      userRow().find('.accuracy').text((accuracy()).toFixed(3) + '%');
+  function getGameStats(secondsPlayed) {
+    return {
+      correctWords: correctWords(),
+      totalWords: totalWords(),
+      secondsPlayed: secondsPlayed
+    }
   }
 
   function startArena() {
-    getUsersTable();
-
     var countDown = 5;
     var interval = setInterval(function() {
       countDown--;
@@ -95,6 +78,7 @@ $(function() {
     if (data.arenaID == getArenaID()) {
       $('.well').spanify();
       startArena();
+      getUsersTable();
     }
   });
 
@@ -113,8 +97,11 @@ $(function() {
     var updateInterval = setInterval(function() {
       elapsedSeconds--;
 
-      updateLocalStats(totalSeconds - elapsedSeconds)
+      user.setStats(getGameStats(totalSeconds - elapsedSeconds));
+      user.updateLocalStats();
       postStatus();
+
+      user.printStats();
 
       socket.emit('get-update', { arenaID: getArenaID() });
 
@@ -130,43 +117,20 @@ $(function() {
     }, 1000);
   }
 
-  function updateLocalStats(seconds) {
-    updateWPM(seconds);
-    updateAccuracy();
-  }
-
   function populateResults() {
     $('#results-modal #time-played').val(
       moment(0).seconds(totalSeconds).format('mm:ss')
     );
 
-    $('#results-modal #wpm').val(getCurrentWPM());
-    $('#results-modal #accuracy').val(getCurrentAccuracy());
-  }
-
-  function getResultsJSON() {
-    return {
-      correctWords: correctWords(),
-      wordsAttempted: wordsAttempted(),
-      secondsPlayed: totalSeconds
-    }
+    $('#results-modal #wpm').val(user.wordsPerMinute());
+    $('#results-modal #accuracy').val(user.accuracy());
   }
 
   var finished = function(){
-    $('#starting-in').text("Time's up!");
-
-    $('.typing-area').attr('disabled', true);
     $('#results-modal').modal('show');
 
     populateResults();
-
-    $.ajax({
-      url: '/users/' + getUserID() + '/updateFromResults',
-      dataType: 'json',
-      method: 'put',
-      data: getResultsJSON()
-    });
-    return;
+    user.postResultsToServer();
   }
 
   function initializeStatusVisualization() {
@@ -196,21 +160,8 @@ $(function() {
     });
   };
 
-  function createStatusHash() {
-    var status = {}
-    $('.well span').each(function(i, v) {
-      status[i] = $(v).attr('complete') == 'true'
-    });
-    return status;
-  }
-
   function postStatus() {
-    socket.emit('update', {
-      userId: getUserID(),
-      currentStatus: createStatusHash(),
-      currentWPM: getCurrentWPM(),
-      currentAccuracy: getCurrentAccuracy()
-    });
+    socket.emit('update', user.completeStatus());
   }
 
   function getUsersTable() {
