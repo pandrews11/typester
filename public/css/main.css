@@ -14,11 +14,7 @@ input[type=checkbox] {
   margin: 10px 0 0 !important;
 }
 
-.row .panel #starting-in {
-  font-size: 20px;
-}
-
-.row .panel #time-remaining {
+.row .panel {
   font-size: 20px;
 }
 

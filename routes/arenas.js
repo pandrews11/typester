@@ -52,7 +52,7 @@ router.route('/join')
         possibleArenas.exec(function(err, arenas) {
           console.log("Possible Arenas: ", arenas);
           var arena = arenas[0];
-          if (arena) {
+          if (arena && arena.users.length < 2) {
             User.findById(userId, function(err, user) {
               arena.users.push(user);
               arena.save();
@@ -112,7 +112,7 @@ router.route('/')
   });
 
 function findMultiplayerArena(opts) {
-  return Arena.find(opts);
+  return Arena.find(opts).populate('users');
 }
 
 

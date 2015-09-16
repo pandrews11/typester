@@ -80,8 +80,6 @@ io.on('connection', function(socket) {
     Arena.findById(data.arenaID, function(err, arena) {
       arena.playersQueued += 1;
 
-      console.log(arena.playersQueued + ' players joined arena: ' + data.arenaID);
-
       arena.save(function(err) {
         if (arena.mode == 'singleplayer' && arena.playersQueued == 1)
           io.in(arena._id).emit('beginCountdown', { arenaID: arena._id });
@@ -94,9 +92,11 @@ io.on('connection', function(socket) {
   // When client pushes an update, store visualization data.
   socket.on('update', function(data) {
     User.findById(data.userId, function(err, user) {
-      user.currentStatus = JSON.stringify(data.status);
+      user.currentStatus = JSON.stringify(data.currentStatus);
+      user.currentWPM = data.currentWPM;
+      user.currentAccuracy = data.currentAccuracy;
       user.save();
-    })
+    });
   });
 
   // When client asked for an update, push them relevant information
@@ -105,37 +105,26 @@ io.on('connection', function(socket) {
       .populate('users').exec( function(err, arena) {
 
       var users = arena.users;
-
       if (users.length > 1)
-        io.in(arena._id).emit('update', { '1': users[0], '2': users[1] });
-
+        io.in(arena._id).emit('update', { users: users });
     });
   });
 
   socket.on('gameover', function(data) {
     socket.leave(data.arenaID);
-    Arena.findById(data.arenaID, function(err, arena) {
+    Arena.findById(data.arenaID)
+      .populate('users').exec(function(err, arena) {
       arena.users.each(function(user) {
         user.currentStatus = '';
+        user.currentWPM = 0;
+        user.currentAccuracy = '0%'
         user.save;
       });
-      arena.remove(function(err) {})
     });
+    if (arena.users.length == 0) {
+      arena.remove();
+    }
   });
 });
-
-function combinedStatusHash(user1, user2) {
-  var user1ID = user1._id;
-  var user2ID = user2._id;
-  var combinedStatus = {user1ID: {}, user2ID: {}}
-
-  JSON.parse(user1.currentStatus).each(function(i, v) {
-    combinedStatus[user1._id][i] = v;
-    combinedStatus[user2._id][i] = JSON.parse(user2.currentStatus)[i];
-  });
-
-  return combinedStatus;
-}
-
 
 module.exports = app;

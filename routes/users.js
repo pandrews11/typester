@@ -69,9 +69,9 @@ router.route('/:id')
     });
   });
 
-router.route('/:name/updateFromResults')
+router.route('/:id/updateFromResults')
   .put(function(req, res) {
-    User.findOne({username: req.params.name}, function(err, user) {
+    User.findById(req.params.id, function(err, user) {
       user.correctWords += Number(req.body.correctWords);
       user.wordsAttempted += Number(req.body.wordsAttempted);
       user.secondsPlayed += Number(req.body.secondsPlayed);

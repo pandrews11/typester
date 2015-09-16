@@ -18,6 +18,10 @@ $(function() {
     return $('#user-id').val();
   }
 
+  function userRow() {
+    return $('tr[data-id=' + getUserID() + ']');
+  }
+
   function correctWords() {
     return $('.well span[complete=true]').length;
   }
@@ -26,22 +30,31 @@ $(function() {
     return correctWords() + $('.well span[complete=false]').length
   }
 
+  function getCurrentWPM() {
+    return userRow().find('.wpm').text();
+  }
+
+  function getCurrentAccuracy() {
+    return userRow().find('.accuracy').text();
+  }
+
   function accuracy() {
     return (correctWords() / wordsAttempted()) * 100;
   }
 
   function updateWPM(seconds) {
-    $('.wpm').text(((correctWords() / seconds) * 60).toFixed(3));
+    userRow().find('.wpm').text(((correctWords() / seconds) * 60).toFixed(3));
   }
 
   function updateAccuracy() {
     if (!isNaN(accuracy()))
-      $('.accuracy').text((accuracy()).toFixed(3) + '%');
+      userRow().find('.accuracy').text((accuracy()).toFixed(3) + '%');
   }
 
   function startArena() {
-    var countDown = 5;
+    getUsersTable();
 
+    var countDown = 5;
     var interval = setInterval(function() {
       countDown--;
 
@@ -88,7 +101,6 @@ $(function() {
 
   $.fn.countdown = function(finished) {
     initializeStatusVisualization();
-    getUsersTable();
 
     var start = $(this).text().split(':');
 
@@ -111,9 +123,8 @@ $(function() {
       );
 
       if (elapsedSeconds == 0) {
-        // clearInterval(updateInterval);
-        // finished();
-        true
+        clearInterval(updateInterval);
+        finished();
       }
 
     }, 1000);
@@ -129,8 +140,8 @@ $(function() {
       moment(0).seconds(totalSeconds).format('mm:ss')
     );
 
-    $('#results-modal #wpm').val($('.wpm').text());
-    $('#results-modal #accuracy').val($('.accuracy').text());
+    $('#results-modal #wpm').val(getCurrentWPM());
+    $('#results-modal #accuracy').val(getCurrentAccuracy());
   }
 
   function getResultsJSON() {
@@ -150,7 +161,7 @@ $(function() {
     populateResults();
 
     $.ajax({
-      url: '/users/' + $('.username').text() + '/updateFromResults',
+      url: '/users/' + getUserID() + '/updateFromResults',
       dataType: 'json',
       method: 'put',
       data: getResultsJSON()
@@ -160,7 +171,28 @@ $(function() {
 
   function initializeStatusVisualization() {
     socket.on('update', function(data) {
-      console.log(data);
+      $.each(data.users, function(i, user) {
+        if (user._id != getUserID()) {
+          // Set opponent WPM
+          $('tr[data-id=' + user._id + ']')
+            .find('.wpm')
+            .text(user.currentWPM);
+
+          // Set opponent Accuracy
+          $('tr[data-id=' + user._id + ']')
+            .find('.accuracy')
+            .text(user.currentAccuracy);
+
+
+          // Visualize where the opponent is
+          $.each(JSON.parse(user.currentStatus), function(i, v) {
+            if (v == true) {
+              $('.well span')
+              .eq(i).css('background-color', 'rgba(255, 0, 0, 0.2)');
+            }
+          });
+        }
+      });
     });
   };
 
@@ -175,8 +207,10 @@ $(function() {
   function postStatus() {
     socket.emit('update', {
       userId: getUserID(),
-      status: createStatusHash()
-    })
+      currentStatus: createStatusHash(),
+      currentWPM: getCurrentWPM(),
+      currentAccuracy: getCurrentAccuracy()
+    });
   }
 
   function getUsersTable() {

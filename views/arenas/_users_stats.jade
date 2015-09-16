@@ -6,7 +6,7 @@ table.table.table-left.table-striped.table-bordered
       th Accuracy
   tbody
     - each user, i in arena.users
-      tr
+      tr(data-id='#{user._id}')
         td.username= user.username
         td.wpm 0
         td.accuracy 0%
