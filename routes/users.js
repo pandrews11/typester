@@ -71,6 +71,8 @@ router.route('/:id')
 
 router.route('/:id/updateFromResults')
   .put(function(req, res) {
+    console.log("Posting results for User: " + req.params.id);
+    console.log(req.body);
     User.findById(req.params.id, function(err, user) {
       user.correctWords += Number(req.body.correctWords);
       user.wordsAttempted += Number(req.body.wordsAttempted);

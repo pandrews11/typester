@@ -102,8 +102,6 @@ $(function() {
       user.updateLocalStats();
       postStatus();
 
-      user.printStats();
-
       socket.emit('get-update', { arenaID: getArenaID() });
 
       $time.text(

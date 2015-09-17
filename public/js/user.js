@@ -22,7 +22,8 @@ User.prototype.setSecondsPlayed = function(value) {
 }
 
 User.prototype.accuracy = function() {
-  return ((this.correctWords / this.wordsAttempted) * 100).toFixed(2);
+  var accuracy = ((this.correctWords / this.wordsAttempted) * 100).toFixed(2);
+  return isNaN(accuracy) ? '0.00%' : accuracy;
 };
 
 User.prototype.wordsPerMinute = function() {
@@ -61,11 +62,12 @@ User.prototype.resultsForServer = function() {
 }
 
 User.prototype.postResultsToServer = function() {
+  console.log(this.id)
   $.ajax({
     url: '/users/' + this.id + '/updateFromResults',
     dataType: 'json',
     method: 'put',
-    data: this.resultsForServer
+    data: this.resultsForServer()
   });
 }
 
