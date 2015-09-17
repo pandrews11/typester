@@ -28,7 +28,6 @@ app.set('port', port);
 var server = http.createServer(app);
 server.listen(port);
 
-
 app.set('view engine', 'jade');
 app.set('views', 'views');
 
@@ -43,7 +42,7 @@ app.use(methodOverride(function(req, res) {
   }
 }));
 
-app.use(cookieParser('secret-string'));
+app.use(cookieParser());
 app.use(session({
   cookie: { maxAge: 60000 * 60 },
   duration: 30 * 60 * 1000,
@@ -54,15 +53,23 @@ app.use(session({
   store: new MongoStore({ mongooseConnection: db.connection })
 }));
 
-app.use(function(req, res, next) {
-  res.locals.session = req.session;
-  next();
-});
+require('./routes/session')(app);
+
 
 // Set routes
+
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/arenas', require('./routes/arenas'));
+
+app.use(function(err, req, res, next) {
+  if (err) {
+    res.status(500);
+    res.render('layout/500', {error : err} );
+  } else {
+    next();
+  }
+});
 
 // Set models
 var Arena = require('./models/arenas');
