@@ -19,6 +19,15 @@ footer .site-footer {
 
 footer .site-footer p {
   margin-top: 20px;
+  text-align: center;
+}
+
+footer .site-footer p img {
+  opacity: 0.5;
+}
+
+.navbar-brand {
+  padding: 10px 0px 0px 10px !important;
 }
 
 .navbar-right {
