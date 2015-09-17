@@ -5,7 +5,9 @@ var User = require('../models/users')
 /* GET home page. */
 router.get('/', function(req, res, next) {
   if (req.session.user) {
-    res.render( 'index', { title: 'typester'} )
+    User.find({}).sort({'wordsPerMinute' : 'desc'}).exec(function(err, users) {
+      res.render( 'index', { users: users} )
+    });
   } else {
     res.redirect( '/login');
   }

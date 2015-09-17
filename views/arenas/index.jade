@@ -9,7 +9,8 @@ block content
           th Mode
           th Difficulty
           th Time
-          th Players
+          th Player 1
+          th Player 2
           - if (session.user && session.user.admin)
             th Actions
       tbody
@@ -24,8 +25,12 @@ block content
             td
               = arena.formattedTime
             td
-              - each user, u in arena.users
-                = user.username
+              - if (arena.users[0])
+                = arena.users[0].username
+            td
+              - if (arena.users[1])
+                = arena.users[1].username
+                
             - if (session.user && session.user.admin)
               td
                 form(action='/arenas/#{arena._id}', method='POST')

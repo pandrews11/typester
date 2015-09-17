@@ -14,6 +14,7 @@ var userSchema = new Schema({
   wordsAttempted: {type: Number, default: 0},
   secondsPlayed: {type: Number, default: 0},
   gamesPlayed: { type: Number, default: 0 },
+  wordsPerMinute: { type: Number, default: 0},
 
   currentStatus: {type: String},
   currentWPM: { type: Number},
@@ -21,6 +22,11 @@ var userSchema = new Schema({
 
   created_at: { type: Date },
   updated_at: {type: Date, default: Date.now }
+});
+
+userSchema.pre('save', function(next) {
+  this.wordsPerMinute = (this.correctWords / (this.secondsPlayed / 60)).toFixed(3);
+  next();
 });
 
 // Instance Methods
@@ -37,16 +43,13 @@ var userSchema = new Schema({
 
 // Virtual Methods (attr_accessor sort of)
 
-userSchema.virtual('wordsPerMinute').get(function() {
-  return (this.correctWords / (this.secondsPlayed / 60)).toFixed(3);
-});
-
 userSchema.virtual('timePlayed').get(function() {
   return moment().startOf('day').add(this.secondsPlayed, 's').format('HH:mm:ss');
 });
 
 userSchema.virtual('accuracy').get(function() {
-  return ((this.correctWords / this.wordsAttempted) * 100).toFixed(3);
+  var accuracy = ((this.correctWords / this.wordsAttempted) * 100).toFixed(2);
+  return isNaN(accuracy) ? '0%' : accuracy + '%';
 });
 
 var User = mongoose.model('User', userSchema);

@@ -1,29 +1,47 @@
 extends layout
 
 block content
-  .container
+
+  .container.col-md-5.col-md-offset-1
     .jumbotron
       h2 New Arena
       form.form-horizontal(action='arenas/join', method='post')
         .form-group
-          label.col-sm-2.control-label Mode
-          .col-sm-4
+          label.col-sm-4.control-label Mode
+          .col-sm-6
             select.form-control(name='mode')
               option(value='singleplayer') Singleplayer
               option(value='multiplayer') Multiplayer
         .form-group
-          label.col-sm-2.control-label Difficulty
-          .col-sm-4
+          label.col-sm-4.control-label Difficulty
+          .col-sm-6
             select.form-control(name='difficulty')
               option(value='easy') Easy
               option(value='medium') Medium
               option(value='hard') Hard
         .form-group
-          label.col-sm-2.control-label Time
-          .col-sm-4
+          label.col-sm-4.control-label Time
+          .col-sm-6
             select.form-control(name='time')
               option(value='30') 00:30
               option(value='60') 01:00
               option(value='120') 02:00
         input(name='userId' type='hidden' value=session.user._id)
         input.btn.btn-success(type='submit', value='Play')
+  
+  .container.col-md-5
+    .panel.panel-default
+      .panel.panel-heading Leaderboards
+      table.table.table-striped.table-bordered
+        thead
+          tr
+            th Username
+            th WPM
+            th Accuracy
+        tbody
+          - each user, i in users
+            tr
+              td= user.username
+              td= user.wordsPerMinute
+              td= user.accuracy
+          
