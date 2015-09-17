@@ -76,6 +76,7 @@ $(function() {
 
   socket.on('beginCountdown', function(data) {
     if (data.arenaID == getArenaID()) {
+      $('.waiting-for-players').fadeOut('slow');
       $('.well').spanify();
       startArena();
       getUsersTable();
