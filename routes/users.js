@@ -18,16 +18,19 @@ router.route('/')
 router.route('/:id')
   .get(function(req, res, next) {
     User.findById(req.params.id, function (err, user) {
-      if (user.username == 'guest') {
+      if (err) {
         res.redirect('/')
       } else {
-        res.format({
-          html: function(){
-            res.render('users/show', {
-              "user" : user
-            });
-          }
-        });
+        if (user.username == 'guest') {
+        } else {
+          res.format({
+            html: function(){
+              res.render('users/show', {
+                "user" : user
+              });
+            }
+          });
+        }
       }
     });
   })
