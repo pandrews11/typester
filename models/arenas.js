@@ -13,6 +13,16 @@ var arenaSchema = new Schema({
   updated_at: {type: Date, default: Date.now }
 });
 
+arenaSchema.pre('remove', function(next) {
+  this.users.forEach(function(user) {
+    user.currentStatus = '';
+    user.currentWPM = 0;
+    user.currentAccuracy = '';
+    user.save();
+  });
+  next();
+});
+
 arenaSchema.virtual('formattedTime').get(function() {
   return moment(0).seconds(this.time).format('mm:ss');
 });
