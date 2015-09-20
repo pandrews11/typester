@@ -60,8 +60,8 @@ $(function() {
     if (e.keyCode == 32 || e.keyCode == 8) {
       var typedText = $('.typing-area').val().split(' ');
 
-      $.each($('.well span'), function(i, v) {
-        if ( $(v).text().trim() == typedText[i] ) {
+      $.each(typedText, function(i, v) {
+        if ( v == $('.well span[data-word=' + i + ']').text().trim() ) {
           $('.well span[data-word=' + i + ']')
             .attr('complete', true)
             .css('color', 'lightgreen');

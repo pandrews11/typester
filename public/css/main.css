@@ -18,8 +18,9 @@ footer .site-footer {
 }
 
 footer .site-footer p {
-  margin-top: 20px;
   text-align: center;
+  padding-top: 10px;
+  margin-bottom: 0px !important;
 }
 
 footer .site-footer p img {

@@ -50,6 +50,7 @@ app.use(session({
   activeDuration: 5 * 60 * 1000,
   secret: 'secret-string',
   resave: true,
+  rolling: true,
   saveUninitialized: true,
   store: new MongoStore({ mongooseConnection: db.connection })
 }));
@@ -109,7 +110,8 @@ io.on('connection', function(socket) {
   socket.on('gameover', function(data) {
     socket.leave(data.arenaID);
     Arena.findByIdAndRemove(data.arenaID, function(err) {
-      console.log("Failed to remove Arena: " + data.arenaID);
+      if (err)
+        console.log("Failed to remove Arena: " + data.arenaID);
     });
   });
 });
