@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 var moment = require('moment');
+var YAML   = require('yamljs');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
@@ -108,6 +109,7 @@ io.on('connection', function(socket) {
   socket.on('gameover', function(data) {
     socket.leave(data.arenaID);
     Arena.findByIdAndRemove(data.arenaID, function(err) {
+      console.log("Failed to remove Arena: " + data.arenaID);
     });
   });
 });

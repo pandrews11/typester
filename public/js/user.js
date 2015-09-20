@@ -53,21 +53,13 @@ User.prototype.statusHash = function() {
   return status;
 }
 
-User.prototype.resultsForServer = function() {
-  return {
-    correctWords: this.correctWords,
-    wordsAttempted: this.wordsAttempted,
-    secondsPlayed: this.secondsPlayed
-  }
-}
-
 User.prototype.postResultsToServer = function() {
   console.log(this.id)
   $.ajax({
     url: '/users/' + this.id + '/updateFromResults',
     dataType: 'json',
     method: 'put',
-    data: this.resultsForServer()
+    data: this.completeStatus()
   });
 }
 

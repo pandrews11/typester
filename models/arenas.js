@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
       moment = require('moment'),
+      YAML   = require('yamljs'),
       Schema = mongoose.Schema;
 
 
@@ -8,9 +9,19 @@ var arenaSchema = new Schema({
   mode: { type: String, required: true, default: 'singleplayer' },
   difficulty: { type: String, required: true, default: 'medium' },
   time: { type: Number, required: true, default: 30 },
+  text: { type: String },
   playersQueued: { type: Number, default: 0 },
   created_at: { type: Date },
   updated_at: {type: Date, default: Date.now }
+});
+
+arenaSchema.pre('save', function(next) {
+  var textsFile = YAML.load('texts.yml');
+  var texts = textsFile.texts[this.difficulty];
+  var idx = Math.floor(Math.random() * Object.keys(texts).length) + 1;
+
+  this.text = texts[String(idx)];
+  next();
 });
 
 arenaSchema.virtual('singleplayerReady').get(function() {

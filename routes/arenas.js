@@ -36,6 +36,7 @@ router.route('/join')
     // Singleplayer will always create their own arena
     if (opts.mode == 'singleplayer') {
       Arena.create(opts, function(err, arena) {
+        console.log(err);
         User.findById(userId, function(err, user) {
           arena.users.push(user);
           arena.save();
