@@ -13,14 +13,12 @@ var arenaSchema = new Schema({
   updated_at: {type: Date, default: Date.now }
 });
 
-arenaSchema.pre('remove', function(next) {
-  this.users.forEach(function(user) {
-    user.currentStatus = '';
-    user.currentWPM = 0;
-    user.currentAccuracy = '';
-    user.save();
-  });
-  next();
+arenaSchema.virtual('singleplayerReady').get(function() {
+  return (this.mode == 'singleplayer' && this.playersQueued == 1);
+});
+
+arenaSchema.virtual('multiplayerReady').get(function() {
+  return (this.mode == 'multiplayer' && this.playersQueued == 2);
 });
 
 arenaSchema.virtual('formattedTime').get(function() {

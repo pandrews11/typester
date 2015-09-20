@@ -16,10 +16,6 @@ var userSchema = new Schema({
   gamesPlayed: { type: Number, default: 0 },
   wordsPerMinute: { type: Number, default: 0},
 
-  currentStatus: {type: String},
-  currentWPM: { type: Number},
-  currentAccuracy: { type: String},
-
   created_at: { type: Date },
   updated_at: {type: Date, default: Date.now }
 });

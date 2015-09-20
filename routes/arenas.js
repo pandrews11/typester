@@ -33,9 +33,6 @@ router.route('/join')
       difficulty: req.body.difficulty
     }
 
-    console.log("User ID: " + userId);
-    console.log("Opts: ", opts);
-
     // Singleplayer will always create their own arena
     if (opts.mode == 'singleplayer') {
       Arena.create(opts, function(err, arena) {
@@ -50,7 +47,6 @@ router.route('/join')
         var possibleArenas = findMultiplayerArena(opts);
 
         possibleArenas.exec(function(err, arenas) {
-          console.log("Possible Arenas: ", arenas);
           var arena = arenas[0];
           if (arena && arena.users.length < 2) {
             User.findById(userId, function(err, user) {
@@ -59,7 +55,6 @@ router.route('/join')
               res.redirect('/arenas/' + arena._id);
             });
           } else {
-            console.log("Creating Multiplayer Arena")
             Arena.create(opts, function(err, arena) {
               User.findById(userId, function(err, user) {
                 arena.users.push(user);
@@ -114,7 +109,5 @@ router.route('/')
 function findMultiplayerArena(opts) {
   return Arena.find(opts).populate('users');
 }
-
-
 
 module.exports = router;

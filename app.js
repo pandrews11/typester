@@ -84,43 +84,30 @@ io.on('connection', function(socket) {
   // When correct number of players join arena, emit `beginCountdown`
   socket.on('join', function(data) {
     socket.join(data.arenaID);
+
     Arena.findById(data.arenaID, function(err, arena) {
       arena.playersQueued += 1;
 
       arena.save(function(err) {
-        if (arena.mode == 'singleplayer' && arena.playersQueued == 1)
-          io.in(arena._id).emit('beginCountdown', { arenaID: arena._id });
-        if (arena.mode == 'multiplayer' && arena.playersQueued == 2)
-          io.in(arena._id).emit('beginCountdown', { arenaID: arena._id })
+        if (arena.singleplayerReady) {
+          io.to(arena._id).emit('beginCountdown', { arenaID: arena._id });
+        }
+
+        if (arena.multiplayerReady) {
+          io.to(arena._id).emit('beginCountdown', { arenaID: arena._id });
+        }
       });
     });
   });
 
   // When client pushes an update, store visualization data.
   socket.on('update', function(data) {
-    User.findById(data.userId, function(err, user) {
-      user.currentStatus = JSON.stringify(data.currentStatus);
-      user.currentWPM = data.currentWPM;
-      user.currentAccuracy = data.currentAccuracy;
-      user.save();
-    });
-  });
-
-  // When client asked for an update, push them relevant information
-  socket.on('get-update', function(data) {
-    Arena.findById(data.arenaID)
-      .populate('users').exec( function(err, arena) {
-
-      var users = arena.users;
-      if (users.length > 1)
-        io.in(arena._id).emit('update', { users: users });
-    });
+    socket.broadcast.to(data.arenaID).emit('update', data)
   });
 
   socket.on('gameover', function(data) {
     socket.leave(data.arenaID);
     Arena.findByIdAndRemove(data.arenaID, function(err) {
-      console.log("Arena Removed");
     });
   });
 });

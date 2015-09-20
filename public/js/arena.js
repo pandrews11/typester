@@ -60,8 +60,8 @@ $(function() {
     if (e.keyCode == 32 || e.keyCode == 8) {
       var typedText = $('.typing-area').val().split(' ');
 
-      $.each(typedText, function(i, v) {
-        if ( v == $('.well span[data-word=' + i + ']').text().trim() ) {
+      $.each($('.well span'), function(i, v) {
+        if ( $(v).text().trim() == typedText[i] ) {
           $('.well span[data-word=' + i + ']')
             .attr('complete', true)
             .css('color', 'lightgreen');
@@ -102,8 +102,6 @@ $(function() {
       user.updateLocalStats();
       postStatus();
 
-      socket.emit('get-update', { arenaID: getArenaID() });
-
       $time.text(
         moment(0).seconds(elapsedSeconds).format('mm:ss')
       );
@@ -134,33 +132,30 @@ $(function() {
 
   function initializeStatusVisualization() {
     socket.on('update', function(data) {
-      $.each(data.users, function(i, user) {
-        if (user._id != getUserID()) {
-          // Set opponent WPM
-          $('tr[data-id=' + user._id + ']')
-            .find('.wpm')
-            .text(user.currentWPM);
+      $('tr[data-id=' + data.userId + ']')
+        .find('.wpm')
+        .text(data.currentWPM);
 
-          // Set opponent Accuracy
-          $('tr[data-id=' + user._id + ']')
-            .find('.accuracy')
-            .text(user.currentAccuracy);
+      // Set opponent Accuracy
+      $('tr[data-id=' + data.userId + ']')
+        .find('.accuracy')
+        .text(data.currentAccuracy);
 
 
-          // Visualize where the opponent is
-          $.each(JSON.parse(user.currentStatus), function(i, v) {
-            if (v == true) {
-              $('.well span')
-              .eq(i).css('background-color', 'rgba(255, 0, 0, 0.2)');
-            }
-          });
+      // Visualize where the opponent is
+      $.each(data.currentStatus, function(i, v) {
+        if (v == true) {
+          $('.well span')
+          .eq(i).css('background-color', 'rgba(255, 0, 0, 0.2)');
         }
       });
     });
   };
 
   function postStatus() {
-    socket.emit('update', user.completeStatus());
+    socket.emit('update', $.extend(user.completeStatus(), {
+      arenaID: getArenaID()
+    }));
   }
 
   function getUsersTable() {
