@@ -153,7 +153,7 @@ $(function() {
   };
 
   function postStatus() {
-    socket.emit('update', $.extend(user.completeStatus(), {
+    socket.emit('update', $.extend(user.intervalStatus(), {
       arenaID: getArenaID()
     }));
   }

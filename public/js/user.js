@@ -42,7 +42,7 @@ User.prototype.setStats = function(data) {
 
 User.prototype.updateLocalStats = function() {
   this.tableRow().find('.wpm').text(this.wordsPerMinute());
-  this.tableRow().find('.accuracy').text(this.accuracy());
+  this.tableRow().find('.accuracy').text(this.accuracy() + '%');
 }
 
 User.prototype.statusHash = function() {
@@ -54,16 +54,15 @@ User.prototype.statusHash = function() {
 }
 
 User.prototype.postResultsToServer = function() {
-  console.log(this.id)
   $.ajax({
     url: '/users/' + this.id + '/updateFromResults',
     dataType: 'json',
     method: 'put',
-    data: this.completeStatus()
+    data: this.finalStatus()
   });
 }
 
-User.prototype.completeStatus = function() {
+User.prototype.intervalStatus = function() {
   return {
     userId: this.id,
     currentStatus: this.statusHash(),
@@ -71,6 +70,16 @@ User.prototype.completeStatus = function() {
     currentAccuracy: this.accuracy()
   };
 }
+
+User.prototype.finalStatus = function() {
+  return {
+    correctWords: this.correctWords,
+    wordsAttempted: this.wordsAttempted,
+    secondsPlayed: this.secondsPlayed
+  };
+}
+
+
 
 User.prototype.printStats = function() {
   console.log('ID: ' + this.id);
